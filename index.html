@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER TECH ACADEMY // FUTURE CODING 2084</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@400;600;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            cyan: '#00f3ff',
+                            pink: '#ff0055',
+                            purple: '#9d00ff',
+                            dark: '#080711',
+                            card: 'rgba(15, 12, 29, 0.65)',
+                            border: 'rgba(0, 243, 255, 0.3)'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        code: ['Fira Code', 'monospace'],
+                        arcade: ['"Press Start 2P"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080711;
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Cyberpunk Style */
+        .glass-panel {
+            background: rgba(15, 12, 29, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 243, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 243, 255, 0.05);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 0, 85, 0.6);
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.3), inset 0 0 20px rgba(255, 0, 85, 0.1);
+        }
+
+        /* Neon Glow Text and Borders */
+        .glow-cyan {
+            text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #00f3ff;
+        }
+
+        .glow-pink {
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 30px #ff0055;
+        }
+
+        .glow-purple {
+            text-shadow: 0 0 10px #9d00ff, 0 0 20px #9d00ff;
+        }
+
+        /* CRT Scanline Overlay */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 6px 100%;
+            opacity: 0.7;
+        }
+
+        /* Cyberpunk Glitch Text Effect */
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip: rect(0, 0, 0, 0);
+        }
+        .glitch::before {
+            left: -2px;
+            text-shadow: 2px 0 #ff0055;
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: 2px;
+            text-shadow: -2px 0 #00f3ff;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(20px, 9999px, 15px, 0); }
+            20% { clip: rect(42px, 9999px, 80px, 0); }
+            40% { clip: rect(10px, 9999px, 85px, 0); }
+            60% { clip: rect(60px, 9999px, 30px, 0); }
+            80% { clip: rect(35px, 9999px, 90px, 0); }
+            100% { clip: rect(5px, 9999px, 50px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            20% { clip: rect(15px, 9999px, 30px, 0); }
+            40% { clip: rect(80px, 9999px, 5px, 0); }
+            60% { clip: rect(5px, 9999px, 60px, 0); }
+            80% { clip: rect(40px, 9999px, 20px, 0); }
+            100% { clip: rect(90px, 9999px, 75px, 0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080711;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff0055;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #ff0055;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+            box-shadow: 0 0 10px #00f3ff;
+        }
+
+        /* 3D Canvas Background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Cyberpunk Button */
+        .cyber-btn {
+            position: relative;
+            background: linear-gradient(45deg, #ff0055, #9d00ff);
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, #00f3ff, #ff0055);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .cyber-btn-outline {
+            position: relative;
+            background: transparent;
+            border: 1px solid #00f3ff;
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-btn-outline:hover {
+            background: rgba(0, 243, 255, 0.2);
+            border-color: #ff0055;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5), inset 0 0 15px rgba(255, 0, 85, 0.3);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen text-slate-100 antialiased selection:bg-cyber-pink selection:text-white">
+
+    <div id="scanlines" class="scanlines"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Main Dynamic Content Overlay -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+        
+        <header class="sticky top-0 z-50 glass-panel border-b border-cyber-cyan/30 px-4 lg:px-8 py-3">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-cyber-pink/20 border border-cyber-pink flex items-center justify-center text-cyber-cyan shadow-[0_0_15px_rgba(255,0,85,0.5)]">
+                        <i class="fa-solid font-bold text-xl fa-terminal"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-orbitron font-black text-lg md:text-xl tracking-wider text-white">
+                            CYBER<span class="text-cyber-cyan">TECH</span>
+                        </h1>
+                        <p class="font-code text-[10px] text-cyber-pink tracking-widest uppercase">ACADEMY // 2084</p>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex items-center gap-3 md:gap-6">
+                    <button id="synth-audio-btn" onclick="toggleSynthAudio()" class="px-3 py-1.5 rounded text-xs font-code border border-cyber-cyan/40 bg-cyber-dark/80 text-cyber-cyan hover:bg-cyber-cyan/20 transition flex items-center gap-2">
+                        <i id="audio-icon" class="fa-solid fa-volume-xmark"></i>
+                        <span class="hidden md:inline" id="audio-status">AUDIO: OFF</span>
+                    </button>
+                    <button onclick="toggleScanlines()" class="px-3 py-1.5 rounded text-xs font-code border border-cyber-pink/40 bg-cyber-dark/80 text-cyber-pink hover:bg-cyber-pink/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-tv"></i>
+                        <span class="hidden md:inline">CRT FILTER</span>
+                    </button>
+                    <a href="#catalogo" class="cyber-btn px-4 py-2 font-orbitron font-bold text-xs uppercase tracking-wider text-white shadow-lg">
+                        CATÁLOGO
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <section class="relative pt-12 pb-16 md:pt-20 md:pb-24 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center justify-center">
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-pink/10 border border-cyber-pink/50 text-cyber-pink text-xs font-code mb-6 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-cyber-pink shadow-[0_0_8px_#ff0055]"></span>
+                MATRÍCULAS ABERTAS PARA O PRÓXIMO CICLO CYBERNETICO
+            </div>
+
+            <h1 class="font-orbitron font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight text-white mb-4 leading-none">
+                <span class="glitch" data-text="CYBER TECH ACADEMY">CYBER TECH ACADEMY</span><br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-white to-cyber-pink glow-cyan">
+                    FUTURE CODING 2084
+                </span>
+            </h1>
+
+            <p class="max-w-2xl text-slate-300 font-code text-sm md:text-base mb-8 leading-relaxed">
+                Forje seu futuro na matriz. Cursos imersivos de alta performance em <span class="text-cyber-cyan">Python</span>, <span class="text-cyber-pink">Desenvolvimento Web</span> e <span class="text-cyber-purple">Engenharia de Dados</span>. Domine o código antes que o sistema domine você.
+            </p>
+
+            <!-- Dynamic Interactive Terminal Box -->
+            <div class="w-full max-w-2xl glass-panel rounded-lg p-4 text-left border border-cyber-cyan/40 mb-10 shadow-[0_0_30px_rgba(0,243,255,0.15)]">
+                <div class="flex items-center justify-between pb-2 border-b border-cyber-cyan/20 mb-3">
+                    <div class="flex gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
+                    </div>
+                    <span class="text-[11px] font-code text-slate-400">system_node@cyber-academy:~</span>
+                </div>
+                <div class="font-code text-xs md:text-sm text-cyber-cyan flex items-start gap-2">
+                    <span class="text-cyber-pink font-bold">&gt;</span>
+                    <span id="terminal-typewriter" class="inline-block"></span>
+                    <span class="animate-ping inline-block text-cyber-pink">_</span>
+                </div>
+            </div>
+
+            <!-- Stats/Summary Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                <div class="glass-panel p-4 rounded-lg text-center">
+                    <div class="font-orbitron font-black text-2xl md:text-3xl text-cyber-cyan">9</div>
+                    <div class="text-xs font-code text-slate-400 mt-1 uppercase">Módulos de Elite</div>
+                </div>
+                <div class="glass-panel p-4 rounded-lg text-center">
+                    <div class="font-orbitron font-black text-2xl md:text-3xl text-cyber-pink">380h</div>
+                    <div class="text-xs font-code text-slate-400 mt-1 uppercase">Carga Horária Total</div>
+                </div>
+                <div class="glass-panel p-4 rounded-lg text-center">
+                    <div class="font-orbitron font-black text-2xl md:text-3xl text-cyber-purple">100%</div>
+                    <div class="text-xs font-code text-slate-400 mt-1 uppercase">Aulas Práticas</div>
+                </div>
+                <div class="glass-panel p-4 rounded-lg text-center">
+                    <div class="font-orbitron font-black text-2xl md:text-3xl text-emerald-400">2084</div>
+                    <div class="text-xs font-code text-slate-400 mt-1 uppercase">Padrão Cyber-Matrix</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="catalogo" class="py-12 px-4 max-w-7xl mx-auto w-full flex-grow">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
+                <div>
+                    <div class="flex items-center gap-2 text-cyber-pink font-code text-xs mb-2">
+                        <i class="fa-solid fa-layer-group"></i> PROTOCOLOS DE APRENDIZADO
+                    </div>
+                    <h2 class="font-orbitron font-bold text-2xl sm:text-4xl text-white uppercase tracking-wide">
+                        CATÁLOGO DE <span class="text-cyber-cyan glow-cyan">CURSOS</span>
+                    </h2>
+                </div>
+
+                <!-- Hours Calculator Counter -->
+                <div class="glass-panel px-4 py-3 rounded-lg border border-cyber-pink/40 flex items-center gap-4 w-full md:w-auto">
+                    <div class="text-3xl text-cyber-pink">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-code text-slate-400">CARGA HORÁRIA FILTRADA:</div>
+                        <div id="total-hours-counter" class="font-orbitron font-bold text-xl text-white">380 Horas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Controls & Search Box -->
+            <div class="glass-panel p-4 rounded-xl mb-10 flex flex-col lg:flex-row gap-4 justify-between items-center border border-cyber-cyan/30">
+                <!-- Track Filters -->
+                <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+                    <button onclick="filterCourses('all')" class="filter-btn active cyber-btn-outline px-4 py-2 rounded font-orbitron text-xs font-bold uppercase text-white">
+                        TODOS (9)
+                    </button>
+                    <button onclick="filterCourses('python')" class="filter-btn cyber-btn-outline px-4 py-2 rounded font-orbitron text-xs font-bold uppercase text-slate-300">
+                        <i class="fa-brands fa-python text-cyber-cyan mr-1"></i> PYTHON (140h)
+                    </button>
+                    <button onclick="filterCourses('web')" class="filter-btn cyber-btn-outline px-4 py-2 rounded font-orbitron text-xs font-bold uppercase text-slate-300">
+                        <i class="fa-solid fa-code text-cyber-pink mr-1"></i> WEB DEV (180h)
+                    </button>
+                    <button onclick="filterCourses('database')" class="filter-btn cyber-btn-outline px-4 py-2 rounded font-orbitron text-xs font-bold uppercase text-slate-300">
+                        <i class="fa-solid fa-database text-cyber-purple mr-1"></i> BANCO DE DADOS (80h)
+                    </button>
+                </div>
+
+                <!-- Real-time Search Box -->
+                <div class="relative w-full lg:w-72">
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar curso ou skill..." class="w-full bg-cyber-dark/90 border border-cyber-cyan/40 rounded px-4 py-2 pl-10 text-xs font-code text-white focus:outline-none focus:border-cyber-pink focus:ring-1 focus:ring-cyber-pink transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Course Cards Grid -->
+            <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically injected via JavaScript -->
+            </div>
+
+            <!-- Empty State Message -->
+            <div id="empty-state" class="hidden glass-panel p-12 text-center rounded-xl border border-cyber-pink/30 my-8">
+                <i class="fa-solid fa-bug text-4xl text-cyber-pink mb-4 animate-bounce"></i>
+                <h3 class="font-orbitron font-bold text-xl text-white mb-2">Nenhum protocolo encontrado</h3>
+                <p class="font-code text-sm text-slate-400">Tente ajustar seus termos de busca na matriz.</p>
+            </div>
+        </section>
+
+        <div id="registration-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+            <div class="glass-panel w-full max-w-xl rounded-xl border border-cyber-cyan shadow-[0_0_50px_rgba(0,243,255,0.25)] overflow-hidden transform scale-95 transition-transform duration-300" id="modal-content">
+                
+                <!-- Modal Header -->
+                <div class="bg-cyber-dark/90 px-6 py-4 border-b border-cyber-cyan/30 flex justify-between items-center">
+                    <div class="flex items-center gap-2 text-cyber-cyan font-orbitron font-bold text-sm">
+                        <i class="fa-solid fa-terminal text-cyber-pink"></i> PROTOCOLO DE INSCRIÇÃO // 2084
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-cyber-pink transition text-lg">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body Form -->
+                <div class="p-6 space-y-4">
+                    <div class="bg-cyber-dark/60 p-3 rounded border border-cyber-cyan/20 font-code text-xs text-cyber-cyan">
+                        <span class="text-cyber-pink font-bold">CURSO SELECIONADO:</span>
+                        <div id="modal-course-title" class="font-orbitron text-base font-bold text-white mt-1">---</div>
+                        <div id="modal-course-hours" class="text-[11px] text-slate-400 mt-0.5">Carga Horária: --h</div>
+                    </div>
+
+                    <form id="enrollment-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block font-code text-xs text-slate-300 mb-1">NOME DO OPERADOR / ALUNO</label>
+                            <input type="text" required placeholder="Ex: Alex V. Mercer" class="w-full bg-cyber-dark/90 border border-cyber-cyan/40 rounded px-3 py-2 text-xs font-code text-white focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-code text-xs text-slate-300 mb-1">E-MAIL NEURAL</label>
+                                <input type="email" required placeholder="operador@net.com" class="w-full bg-cyber-dark/90 border border-cyber-cyan/40 rounded px-3 py-2 text-xs font-code text-white focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan">
+                            </div>
+                            <div>
+                                <label class="block font-code text-xs text-slate-300 mb-1">TELEFONE / COMMS</label>
+                                <input type="tel" required placeholder="(11) 99999-8888" class="w-full bg-cyber-dark/90 border border-cyber-cyan/40 rounded px-3 py-2 text-xs font-code text-white focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-code text-xs text-slate-300 mb-1">PERÍODO PRETENDIDO</label>
+                            <select class="w-full bg-cyber-dark/90 border border-cyber-cyan/40 rounded px-3 py-2 text-xs font-code text-white focus:outline-none focus:border-cyber-cyan">
+                                <option value="noturno">Noturno (19h - 22h30)</option>
+                                <option value="vespertino">Vespertino (14h - 17h30)</option>
+                                <option value="matutino">Matutino (09h - 12h30)</option>
+                                <option value="fim_semana">Cyber Weekends (Sábados)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="cyber-btn w-full py-3 mt-4 font-orbitron font-bold text-xs uppercase tracking-widest text-white shadow-lg">
+                            CONFIRMAR CONEXÃO E MATRÍCULA
+                        </button>
+                    </form>
+
+                    <!-- Success Message Container -->
+                    <div id="modal-success-msg" class="hidden p-4 rounded bg-emerald-950/80 border border-emerald-500/50 text-center space-y-2">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-3xl mb-1"></i>
+                        <h4 class="font-orbitron font-bold text-white text-base">PROTOCOLO INICIADO COM SUCESSO!</h4>
+                        <p class="font-code text-xs text-emerald-200">Sua solicitação de matrícula foi enviada para o terminal central. Em breve entraremos em contato.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="glass-panel border-t border-cyber-cyan/30 py-8 px-4 mt-auto">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <div>
+                    <div class="font-orbitron font-bold text-sm text-white">CYBER TECH ACADEMY</div>
+                    <p class="font-code text-xs text-slate-400 mt-1">Desenvolvido para hospedar no GitHub Pages & Netlify</p>
+                </div>
+
+                <div class="flex gap-4 text-slate-400 text-sm">
+                    <a href="#" class="hover:text-cyber-cyan transition"><i class="fa-brands fa-github text-lg"></i></a>
+                    <a href="#" class="hover:text-cyber-pink transition"><i class="fa-brands fa-discord text-lg"></i></a>
+                    <a href="#" class="hover:text-cyber-cyan transition"><i class="fa-brands fa-twitter text-lg"></i></a>
+                </div>
+
+                <div class="font-code text-[11px] text-slate-500">
+                    &copy; 2084 CYBER TECH ACADEMY // SYSTEM READY
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        /* ----------------------------------------------------
+         * 1. COURSES DATA SOURCE
+         * ---------------------------------------------------- */
+        const coursesData = [
+            // Python Track
+            {
+                id: 'py1',
+                track: 'python',
+                trackName: 'Python Protocol',
+                title: 'Programação em Python 1',
+                hours: 40,
+                level: 'Iniciante',
+                icon: 'fa-brands fa-python',
+                color: 'cyber-cyan',
+                description: 'Fundamentos da linguagem Python, sintaxe moderna, estruturas condicionais, laços e lógica algorítmica pura.',
+                tags: ['Sintaxe', 'Lógica', 'Algoritmos', 'Automação']
+            },
+            {
+                id: 'py2',
+                track: 'python',
+                trackName: 'Python Protocol',
+                title: 'Programação em Python 2',
+                hours: 40,
+                level: 'Intermediário',
+                icon: 'fa-brands fa-python',
+                color: 'cyber-cyan',
+                description: 'Programação Orientada a Objetos (POO), manipulação avançada de arquivos, módulos e estruturas de dados dinâmicas.',
+                tags: ['POO', 'Estrutura de Dados', 'Módulos', 'Arquivos']
+            },
+            {
+                id: 'py3',
+                track: 'python',
+                trackName: 'Python Protocol',
+                title: 'Programação em Python 3',
+                hours: 60,
+                level: 'Avançado',
+                icon: 'fa-brands fa-python',
+                color: 'cyber-cyan',
+                description: 'Concorrência, assincronismo (asyncio), testes unitários, automação avançada e metaprogramação Python.',
+                tags: ['Asyncio', 'Clean Code', 'Testes', 'Performance']
+            },
+
+            // Web Development Track
+            {
+                id: 'web1',
+                track: 'web',
+                trackName: 'Web Matrix',
+                title: 'Desenvolvimento Web com HTML, CSS e JS',
+                hours: 60,
+                level: 'Iniciante',
+                icon: 'fa-solid fa-code',
+                color: 'cyber-pink',
+                description: 'Construção de interfaces web responsivas, manipulação do DOM, animações CSS3 e lógica JavaScript moderna ES6+.',
+                tags: ['HTML5', 'CSS3', 'JavaScript', 'DOM']
+            },
+            {
+                id: 'web2',
+                track: 'web',
+                trackName: 'Web Matrix',
+                title: 'Desenvolvimento Web com React',
+                hours: 40,
+                level: 'Intermediário',
+                icon: 'fa-brands fa-react',
+                color: 'cyber-pink',
+                description: 'Criação de Single Page Applications (SPAs), componentes funcionais, Hooks, gerenciamento de estado e integrações.',
+                tags: ['ReactJS', 'Hooks', 'JSX', 'SPA']
+            },
+            {
+                id: 'web3',
+                track: 'web',
+                trackName: 'Web Matrix',
+                title: 'Desenvolvimento Web com Flask e Django',
+                hours: 80,
+                level: 'Avançado',
+                icon: 'fa-solid fa-server',
+                color: 'cyber-pink',
+                description: 'Arquitetura Backend robusta em Python. Construção de APIs RESTful com Flask e aplicações completas com Django.',
+                tags: ['Flask', 'Django', 'REST API', 'Backend']
+            },
+
+            // Database Track
+            {
+                id: 'db1',
+                track: 'database',
+                trackName: 'Data Vault',
+                title: 'Banco de Dados SQLite3',
+                hours: 20,
+                level: 'Iniciante',
+                icon: 'fa-solid fa-database',
+                color: 'cyber-purple',
+                description: 'Armazenamento leve e embarcado. Queries SQL essenciais, modelagem relacional simples e integração local.',
+                tags: ['SQL', 'SQLite', 'Persistência', 'CRUD']
+            },
+            {
+                id: 'db2',
+                track: 'database',
+                trackName: 'Data Vault',
+                title: 'Banco de Dados Realtime Database',
+                hours: 20,
+                level: 'Intermediário',
+                icon: 'fa-solid fa-bolt',
+                color: 'cyber-purple',
+                description: 'Sincronização de dados em tempo real, bancos de dados NoSQL, eventos e arquiteturas altamente reativas.',
+                tags: ['NoSQL', 'Realtime', 'WebSockets', 'Firebase']
+            },
+            {
+                id: 'db3',
+                track: 'database',
+                trackName: 'Data Vault',
+                title: 'Banco de Dados PostgreSQL',
+                hours: 40,
+                level: 'Avançado',
+                icon: 'fa-solid fa-hard-drive',
+                color: 'cyber-purple',
+                description: 'SGBD relacional corporativo. Transações complexas, indexação avançada, triggers, procedimentos e segurança.',
+                tags: ['PostgreSQL', 'SQL Avançado', 'Performance', 'ACID']
+            }
+        ];
+
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        function renderCourses() {
+            const grid = document.getElementById('courses-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            const filtered = coursesData.filter(course => {
+                const matchesFilter = currentFilter === 'all' || course.track === currentFilter;
+                const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      course.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchesFilter && matchesSearch;
+            });
+
+            // Update Total Hours Calculator
+            const totalHours = filtered.reduce((acc, curr) => acc + curr.hours, 0);
+            document.getElementById('total-hours-counter').textContent = `${totalHours} Horas`;
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(course => {
+                const card = document.createElement('div');
+                card.className = 'glass-panel rounded-xl p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-300 hover:-translate-y-1';
+                
+                // Track badge color map
+                const colorHex = course.track === 'python' ? '#00f3ff' : course.track === 'web' ? '#ff0055' : '#9d00ff';
+
+                card.innerHTML = `
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[${colorHex}]/20 to-transparent rounded-bl-full pointer-events-none"></div>
+
+                    <div>
+                        <!-- Card Header -->
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-code uppercase border border-[${colorHex}]/40 text-white bg-cyber-dark/80">
+                                <i class="${course.icon} text-[${colorHex}]"></i> ${course.trackName}
+                            </span>
+                            <span class="text-xs font-code text-slate-400 flex items-center gap-1">
+                                <i class="fa-regular fa-clock text-cyber-pink"></i> ${course.hours}h
+                            </span>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="font-orbitron font-bold text-lg text-white mb-2 group-hover:text-cyber-cyan transition">
+                            ${course.title}
+                        </h3>
+
+                        <!-- Description -->
+                        <p class="font-code text-xs text-slate-300 mb-6 leading-relaxed">
+                            ${course.description}
+                        </p>
+                    </div>
+
+                    <div>
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-1.5 mb-6">
+                            ${course.tags.map(tag => `
+                                <span class="px-2 py-0.5 rounded text-[10px] font-code bg-cyber-dark/90 border border-slate-700 text-slate-300">
+                                    #${tag}
+                                </span>
+                            `).join('')}
+                        </div>
+
+                        <!-- Enrollment Button -->
+                        <button onclick="openModal('${course.id}')" class="cyber-btn-outline w-full py-2.5 rounded font-orbitron font-bold text-xs uppercase text-cyber-cyan flex items-center justify-center gap-2">
+                            <span>INICIAR CURSO</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCourses(track) {
+            currentFilter = track;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-cyber-cyan/20');
+            });
+            event.currentTarget.classList.add('active', 'bg-cyber-cyan/20');
+            renderCourses();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            renderCourses();
+        }
+
+        function openModal(courseId) {
+            const course = coursesData.find(c => c.id === courseId);
+            if (!course) return;
+
+            document.getElementById('modal-course-title').textContent = course.title;
+            document.getElementById('modal-course-hours').textContent = `Módulo: ${course.trackName} // Carga Horária: ${course.hours} horas`;
+            
+            const modal = document.getElementById('registration-modal');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('registration-modal');
+            const content = document.getElementById('modal-content');
+
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('enrollment-form').reset();
+                document.getElementById('enrollment-form').classList.remove('hidden');
+                document.getElementById('modal-success-msg').classList.add('hidden');
+            }, 300);
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            document.getElementById('enrollment-form').classList.add('hidden');
+            document.getElementById('modal-success-msg').classList.remove('hidden');
+            
+            // Play synth tone if audio enabled
+            if (synthAudioEnabled) {
+                const synth = new Tone.Synth().toDestination();
+                synth.triggerAttackRelease("C5", "8n");
+            }
+        }
+
+        const terminalCommands = [
+            "python3 -m cyber_academy --init-learning-path",
+            "git clone https://matrix.cybertech.edu/fullstack-2084.git",
+            "CONNECTING TO NEURAL DATA VAULT [POSTGRESQL // REALTIME]...",
+            "SUCCESS: ALL SYSTEMS OPERATIONAL. WELCOME OPERATOR."
+        ];
+        let cmdIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+
+        function typeTerminalText() {
+            const currentCmd = terminalCommands[cmdIdx];
+            const targetEl = document.getElementById('terminal-typewriter');
+
+            if (!isDeleting) {
+                targetEl.textContent = currentCmd.substring(0, charIdx + 1);
+                charIdx++;
+                if (charIdx === currentCmd.length) {
+                    isDeleting = true;
+                    setTimeout(typeTerminalText, 2500);
+                    return;
+                }
+            } else {
+                targetEl.textContent = currentCmd.substring(0, charIdx - 1);
+                charIdx--;
+                if (charIdx === 0) {
+                    isDeleting = false;
+                    cmdIdx = (cmdIdx + 1) % terminalCommands.length;
+                }
+            }
+            setTimeout(typeTerminalText, isDeleting ? 30 : 60);
+        }
+
+        let synthAudioEnabled = false;
+
+        function toggleSynthAudio() {
+            synthAudioEnabled = !synthAudioEnabled;
+            const statusEl = document.getElementById('audio-status');
+            const iconEl = document.getElementById('audio-icon');
+
+            if (synthAudioEnabled) {
+                Tone.start();
+                statusEl.textContent = 'AUDIO: ON';
+                iconEl.className = 'fa-solid fa-volume-high text-cyber-cyan';
+                
+                // Play ambient synth note
+                const synth = new Tone.Synth({
+                    oscillator: { type: "sawtooth" },
+                    envelope: { attack: 0.1, decay: 0.2, sustain: 0.5, release: 1 }
+                }).toDestination();
+                synth.volume.value = -12;
+                synth.triggerAttackRelease("A3", "8n");
+            } else {
+                statusEl.textContent = 'AUDIO: OFF';
+                iconEl.className = 'fa-solid fa-volume-xmark text-slate-400';
+            }
+        }
+
+        function toggleScanlines() {
+            const lines = document.getElementById('scanlines');
+            lines.style.display = lines.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            
+            // Scene & Camera
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x080711, 0.025);
+
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 3, 12);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // 1. Synthwave Grid Floor
+            const gridExtent = 80;
+            const gridSegments = 40;
+            const gridGeo = new THREE.PlaneGeometry(gridExtent, gridExtent, gridSegments, gridSegments);
+            
+            // Rotate flat on ground
+            gridGeo.rotateX(-Math.PI / 2);
+
+            const gridMat = new THREE.MeshBasicMaterial({
+                color: 0x00f3ff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.35
+            });
+
+            const gridMesh = new THREE.Mesh(gridGeo, gridMat);
+            gridMesh.position.y = -2;
+            scene.add(gridMesh);
+
+            // 2. Retro Neon Sun / Sphere
+            const sunGeo = new THREE.SphereGeometry(6, 32, 32);
+            const sunMat = new THREE.MeshBasicMaterial({
+                color: 0xff0055,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+            sunMesh.position.set(0, 4, -30);
+            scene.add(sunMesh);
+
+            // 3. Floating Cyber Particles / Stars
+            const particleCount = 400;
+            const particleGeo = new THREE.BufferGeometry();
+            const particlePositions = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                particlePositions[i] = (Math.random() - 0.5) * 80;
+                particlePositions[i + 1] = (Math.random() - 0.5) * 40 + 5;
+                particlePositions[i + 2] = (Math.random() - 0.5) * 80;
+            }
+
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+
+            const particleMat = new THREE.PointsMaterial({
+                color: 0x00f3ff,
+                size: 0.15,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particleSystem = new THREE.Points(particleGeo, particleMat);
+            scene.add(particleSystem);
+
+            // Interactive mouse effect
+            let mouseX = 0;
+            let mouseY = 0;
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
+            });
+
+            // Window Resize Handler
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Grid Movement (Infinite Scroll Effect)
+                gridMesh.position.z += 0.08;
+                if (gridMesh.position.z >= 2) {
+                    gridMesh.position.z = 0;
+                }
+
+                // Sun rotation
+                sunMesh.rotation.y += 0.003;
+
+                // Subtle Camera Parallax
+                camera.position.x += (mouseX * 4 - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY * 2 + 3 - camera.position.y) * 0.05;
+                camera.lookAt(0, 0, -10);
+
+                // Particle Rotation
+                particleSystem.rotation.y += 0.0008;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        }
+
+        window.onload = function() {
+            initThreeJS();
+            renderCourses();
+            typeTerminalText();
+        };
+    </script>
+</body>
+</html>
